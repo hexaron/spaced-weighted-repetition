@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 #[derive(Debug, Clone)]
 /// If data is 0b00000001, then the last pushed value is true.
 /// get(0) will return true and all other will return false.
@@ -28,6 +30,27 @@ impl BoundedBitVec {
     /// This is the probability that a randomly chosen element is 1.
     pub fn to_p(&self) -> f64 {
         (self.data.count_ones() as f64) / 8f64
+    }
+}
+
+impl From<BoundedBitVec> for [bool; 8] {
+    fn from(value: BoundedBitVec) -> Self {
+        [
+            value.get(0),
+            value.get(1),
+            value.get(2),
+            value.get(3),
+            value.get(4),
+            value.get(5),
+            value.get(6),
+            value.get(7),
+        ]
+    }
+}
+
+impl Display for BoundedBitVec {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", <[bool; 8]>::from(self.clone()))
     }
 }
 
@@ -118,5 +141,30 @@ mod tests {
         assert_eq!(0f64, empty.to_p());
         assert_eq!(1f64, full.to_p());
         assert_eq!(0.625f64, bounded_bit_vec.to_p());
+    }
+
+    #[test]
+    fn display() {
+        let Setup {
+            empty,
+            full,
+            bounded_bit_vec,
+        } = setup();
+
+        assert_eq!(
+            "[false, false, false, false, false, false, false, false]",
+            format!("{empty}")
+        );
+
+        assert_eq!(
+            "[true, true, true, true, true, true, true, true]",
+            format!("{full}")
+        );
+
+        // bounded_bit_vec: 0b10110110
+        assert_eq!(
+            "[false, true, true, false, true, true, false, true]",
+            format!("{bounded_bit_vec}")
+        );
     }
 }
