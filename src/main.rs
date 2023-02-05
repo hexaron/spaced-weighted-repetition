@@ -1,14 +1,12 @@
-use crate::problem::Problem;
+use crate::problem_manager::ProblemManager;
 
-mod problem;
+mod problem_manager;
 mod utils;
 
 fn main() {
-    let mut problems = Problem::all_new();
+    let mut problem_manager = ProblemManager::new();
 
-    println!("{problems:?}");
-
-    for problem in &mut problems {
-        problem.pose();
+    loop {
+        problem_manager.pose();
     }
 }
