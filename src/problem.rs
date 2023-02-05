@@ -1,8 +1,10 @@
+use crate::utils::bounded_bit_vec::BoundedBitVec;
+
 #[derive(Debug)]
 pub struct Problem {
     from: String,
     to: String,
-    history: Vec<bool>,
+    history: BoundedBitVec,
     spacing: u32,
 }
 
@@ -11,7 +13,7 @@ impl Problem {
         Self {
             from: from.to_owned(),
             to: to.to_owned(),
-            history: Vec::new(),
+            history: BoundedBitVec::new(),
             spacing: 0,
         }
     }
@@ -20,7 +22,7 @@ impl Problem {
         vec![Self::new("a", "1")]
     }
 
-    pub fn state(&mut self) {
+    pub fn pose(&mut self) {
         self.spacing = 0;
 
         println!("{}", self.from);

@@ -1,6 +1,7 @@
 use crate::problem::Problem;
 
 mod problem;
+mod utils;
 
 fn main() {
     let mut problems = Problem::all_new();
@@ -8,6 +9,6 @@ fn main() {
     println!("{problems:?}");
 
     for problem in &mut problems {
-        problem.state();
+        problem.pose();
     }
 }
