@@ -1,3 +1,13 @@
+use crate::problem::Problem;
+
+mod problem;
+
 fn main() {
-    println!("Hello, world!");
+    let mut problems = Problem::all_new();
+
+    println!("{problems:?}");
+
+    for problem in &mut problems {
+        problem.state();
+    }
 }
