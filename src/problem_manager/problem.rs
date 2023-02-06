@@ -14,7 +14,7 @@ impl BoundedBitVec {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Problem {
     from: String,
     to: String,
@@ -36,7 +36,7 @@ impl Problem {
         }
     }
 
-    pub fn pose(&mut self) {
+    pub fn pose(&mut self) -> bool {
         self.spacing = 0;
 
         println!("{}", self.from);
@@ -54,6 +54,8 @@ impl Problem {
                 "Correct!".green(),
                 self.get_player_p().to_percent()
             );
+
+            return true;
         } else {
             self.history.push(false);
 
@@ -63,6 +65,8 @@ impl Problem {
                 self.to.bold(),
                 self.get_player_p().to_percent()
             );
+
+            return false;
         }
     }
 

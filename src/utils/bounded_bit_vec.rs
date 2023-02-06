@@ -3,6 +3,7 @@ use std::fmt::Display;
 #[derive(Debug, Clone)]
 /// If data is 0b00000001, then the last pushed value is true.
 /// get(0) will return true and all other will return false.
+#[derive(PartialEq)]
 pub struct BoundedBitVec {
     data: u8,
 }

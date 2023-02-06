@@ -1,11 +1,12 @@
-use std::fmt::Display;
+use std::{fmt::Display, ops::Range};
 
-use rand::{rngs::ThreadRng, seq::SliceRandom};
+use rand::{rngs::ThreadRng, seq::SliceRandom, Rng};
 
 use self::problem::Problem;
 
 mod problem;
 
+#[derive(Debug)]
 pub struct ProblemManager {
     problems: Vec<Problem>,
     rng: ThreadRng,
@@ -19,32 +20,43 @@ impl ProblemManager {
         }
     }
 
-    pub fn pose(&mut self) {
-        let problem = self.get_most_relevant_problem_mut();
-
-        problem.pose();
-        println!();
+    pub fn shuffle(&mut self) {
+        self.problems.shuffle(&mut self.rng);
     }
 
-    fn get_most_relevant_problem_mut(&mut self) -> &mut Problem {
-        let mut problem_improvements = Vec::new();
+    pub fn pose(&mut self) {
+        let problem_index = self.get_most_relevant_problem_mut();
+        let problem = &mut self.problems[problem_index];
 
-        for (index, problem) in self.problems.iter().enumerate() {
-            // Assuming the problem would be answered correctly, how big of a difference would that
-            // make?
-            let p_update = problem.get_player_p_with_assumption() - problem.get_player_p();
+        let correct = problem.pose();
 
-            let total_p_update = problem.get_p() * p_update;
+        let to_index;
 
-            problem_improvements.push((index, total_p_update));
+        if correct {
+            let to_index_option = self
+                .problems
+                .iter()
+                .enumerate()
+                .skip(problem_index)
+                .find(|(_, problem)| problem.get_player_p() > problem.get_player_p());
+
+            to_index = match to_index_option {
+                Some((i, _)) => i,
+                None => (problem_index + 1).min(self.problems.len() - 1),
+            };
+        } else {
+            to_index = 0;
         }
 
-        problem_improvements.shuffle(&mut self.rng);
+        let problem = self.problems.remove(problem_index);
 
-        // Sort descending.
-        problem_improvements.sort_by(|(_, a), (_, b)| b.partial_cmp(a).unwrap());
+        self.problems.insert(to_index, problem);
+    }
 
-        &mut self.problems[problem_improvements[0].0]
+    fn get_most_relevant_problem_mut(&mut self) -> usize {
+        let r: f64 = self.rng.gen();
+
+        (((self.problems.len() + 1) as f64).powf(r.powi(6)) - 1.0) as usize
     }
 
     pub fn total_p(&self) -> f64 {
@@ -52,6 +64,12 @@ impl ProblemManager {
             .iter()
             .map(|problem| problem.get_p() * problem.get_player_p())
             .sum()
+    }
+
+    pub fn debug_print_problem_order(&self, range: Range<usize>) {
+        for (i, problem) in self.problems[range].iter().enumerate() {
+            println!("{i: <2}: {problem}");
+        }
     }
 }
 
