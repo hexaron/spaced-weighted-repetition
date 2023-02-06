@@ -2,6 +2,8 @@ mod problems;
 
 use std::fmt::Display;
 
+use colored::Colorize;
+
 use crate::utils::{bounded_bit_vec::BoundedBitVec, ToPercent};
 
 impl BoundedBitVec {
@@ -47,11 +49,20 @@ impl Problem {
         if input.trim() == self.to {
             self.history.push(true);
 
-            println!("Correct! {}%", self.get_player_p().to_percent());
+            println!(
+                "{}  ({}%)",
+                "Correct!".green(),
+                self.get_player_p().to_percent()
+            );
         } else {
             self.history.push(false);
 
-            println!("Answer: {}. {}%", self.to, self.get_player_p().to_percent());
+            println!(
+                "{} -> {}  ({}%)",
+                "Wrong!".on_red(),
+                self.to.bold(),
+                self.get_player_p().to_percent()
+            );
         }
     }
 

@@ -9,7 +9,7 @@ pub struct BoundedBitVec {
 
 impl BoundedBitVec {
     pub fn new() -> Self {
-        Self { data: 0 }
+        Self { data: 0b00000000 }
     }
 
     pub fn push(&mut self, value: bool) {
