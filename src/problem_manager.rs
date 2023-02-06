@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use self::problem::Problem;
 
 mod problem;
@@ -43,5 +45,17 @@ impl ProblemManager {
             .iter()
             .map(|problem| problem.get_p() * problem.get_player_p())
             .sum()
+    }
+}
+
+impl Display for ProblemManager {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "ProblemManager:")?;
+
+        for problem in &self.problems {
+            writeln!(f, "{problem}")?;
+        }
+
+        Ok(())
     }
 }

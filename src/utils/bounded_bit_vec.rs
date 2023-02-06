@@ -25,16 +25,10 @@ impl BoundedBitVec {
 
         (self.data >> index) % 2 == 1
     }
-
-    /// Take the average of all 1s and 0s.
-    /// This is the probability that a randomly chosen element is 1.
-    pub fn to_p(&self) -> f64 {
-        (self.data.count_ones() as f64) / 8f64
-    }
 }
 
-impl From<BoundedBitVec> for [bool; 8] {
-    fn from(value: BoundedBitVec) -> Self {
+impl From<&BoundedBitVec> for [bool; 8] {
+    fn from(value: &BoundedBitVec) -> Self {
         [
             value.get(0),
             value.get(1),
@@ -50,7 +44,7 @@ impl From<BoundedBitVec> for [bool; 8] {
 
 impl Display for BoundedBitVec {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", <[bool; 8]>::from(self.clone()))
+        write!(f, "{:?}", <[bool; 8]>::from(self))
     }
 }
 
@@ -62,6 +56,12 @@ impl From<u8> for BoundedBitVec {
 
 impl From<BoundedBitVec> for u8 {
     fn from(value: BoundedBitVec) -> Self {
+        value.data
+    }
+}
+
+impl From<&BoundedBitVec> for u8 {
+    fn from(value: &BoundedBitVec) -> Self {
         value.data
     }
 }
@@ -128,19 +128,6 @@ mod tests {
         bounded_bit_vec.push(false);
 
         assert_eq!(0b00000110, u8::from(bounded_bit_vec.clone()));
-    }
-
-    #[test]
-    fn to_p() {
-        let Setup {
-            empty,
-            full,
-            bounded_bit_vec,
-        } = setup();
-
-        assert_eq!(0f64, empty.to_p());
-        assert_eq!(1f64, full.to_p());
-        assert_eq!(0.625f64, bounded_bit_vec.to_p());
     }
 
     #[test]
