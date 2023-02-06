@@ -1,17 +1,21 @@
 use std::fmt::Display;
 
+use rand::{rngs::ThreadRng, seq::SliceRandom};
+
 use self::problem::Problem;
 
 mod problem;
 
 pub struct ProblemManager {
     problems: Vec<Problem>,
+    rng: ThreadRng,
 }
 
 impl ProblemManager {
     pub fn new() -> Self {
         Self {
             problems: Problem::all_new().unwrap(),
+            rng: rand::thread_rng(),
         }
     }
 
@@ -34,6 +38,8 @@ impl ProblemManager {
 
             problem_improvements.push((index, total_p_update));
         }
+
+        problem_improvements.shuffle(&mut self.rng);
 
         // Sort descending.
         problem_improvements.sort_by(|(_, a), (_, b)| b.partial_cmp(a).unwrap());
