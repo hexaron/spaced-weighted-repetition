@@ -51,7 +51,7 @@ impl Problem {
         } else {
             self.history.push(false);
 
-            println!("Not correct! {}%", self.get_player_p().to_percent());
+            println!("Answer: {}. {}%", self.to, self.get_player_p().to_percent());
         }
     }
 

@@ -11,7 +11,7 @@ pub struct ProblemManager {
 impl ProblemManager {
     pub fn new() -> Self {
         Self {
-            problems: Problem::all_new(),
+            problems: Problem::all_new().unwrap(),
         }
     }
 
@@ -19,6 +19,7 @@ impl ProblemManager {
         let problem = self.get_most_relevant_problem_mut();
 
         problem.pose();
+        println!();
     }
 
     fn get_most_relevant_problem_mut(&mut self) -> &mut Problem {

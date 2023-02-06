@@ -8,8 +8,5 @@ fn main() {
 
     loop {
         problem_manager.pose();
-
-        println!();
-        println!("{problem_manager}");
     }
 }
