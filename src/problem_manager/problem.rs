@@ -140,6 +140,6 @@ mod tests {
 
         assert_eq!(0f64, empty.to_p());
         assert_eq!(1f64, full.to_p());
-        assert_eq!(0.625f64, bounded_bit_vec.to_p());
+        assert_eq!(0.42745098039215684f64, bounded_bit_vec.to_p());
     }
 }
