@@ -8,9 +8,7 @@ mod problem_manager;
 mod utils;
 
 fn main() {
-    let mut problem_manager = ProblemManager::new();
-
-    problem_manager.shuffle();
+    let mut problem_manager = ProblemManager::new(true);
 
     loop {
         print!("{esc}c", esc = 27 as char);

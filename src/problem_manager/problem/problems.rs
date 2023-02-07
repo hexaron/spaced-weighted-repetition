@@ -25,7 +25,15 @@ impl Problem {
                 continue;
             }
 
-            problems.push(Problem::new(hiragana, roman, p));
+            // TODO (2023-02-07): Do not filter these.
+            if [
+                "ma", "sa", "ji", "nu", "na", "ho", "do", "bu", "me", "da", "ri", "bi", "ha", "bo",
+                "bu", "be", "ke", "yu",
+            ]
+            .contains(&roman)
+            {
+                problems.push(Problem::new(hiragana, roman, p));
+            }
         }
 
         Ok(problems)

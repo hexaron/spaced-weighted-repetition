@@ -9,19 +9,28 @@ mod problem;
 #[derive(Debug)]
 pub struct ProblemManager {
     problems: Vec<Problem>,
+    log_2_m: i32,
     rng: ThreadRng,
 }
 
 impl ProblemManager {
-    pub fn new() -> Self {
-        Self {
-            problems: Problem::all_new().unwrap(),
-            rng: rand::thread_rng(),
-        }
-    }
+    pub fn new(shuffle: bool) -> Self {
+        let mut rng = rand::thread_rng();
 
-    pub fn shuffle(&mut self) {
-        self.problems.shuffle(&mut self.rng);
+        let mut problems = Problem::all_new().unwrap();
+
+        if shuffle {
+            problems.shuffle(&mut rng);
+        }
+
+        // Storing in temporary variable creates copy.
+        let m = problems.len() as f64;
+
+        Self {
+            problems,
+            log_2_m: m.log2().round() as i32,
+            rng,
+        }
     }
 
     pub fn pose(&mut self) {
@@ -56,7 +65,9 @@ impl ProblemManager {
     fn get_most_relevant_problem_mut(&mut self) -> usize {
         let r: f64 = self.rng.gen();
 
-        (((self.problems.len() + 1) as f64).powf(r.powi(6)) - 1.0) as usize
+        let m = self.problems.len() as f64;
+
+        (m * r.powi(self.log_2_m)) as usize
     }
 
     pub fn total_p(&self) -> f64 {
