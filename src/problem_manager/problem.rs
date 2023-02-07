@@ -19,7 +19,6 @@ pub struct Problem {
     from: String,
     to: String,
     history: BoundedBitVec,
-    spacing: u32,
     /// How likely is it that this translation will be useful, i.e. how likely is `from` to appear
     /// in a random word/sentence.
     p: f64,
@@ -31,14 +30,28 @@ impl Problem {
             from: from.to_owned(),
             to: to.to_owned(),
             history: BoundedBitVec::new(),
-            spacing: 0,
             p,
         }
     }
 
     pub fn pose(&mut self) -> bool {
-        self.spacing = 0;
+        // Empty history means either 8 times wrong in a row.
+        // Or simply empty history.
+        // Getting it wrong 8 times in a row is nearly impossible.
+        // Therefore we can assume that this problem has never been posed.
+        if self.history.is_empty() {
+            println!("{}", "New Hiragana!".blue());
+            println!("{} -> {}", self.from, self.to);
 
+            // We push true, to mark this as seen.
+            self.history.push(true);
+
+            // We return false, because the player did not guess correctly.
+            // This will move the problem to the beginning of the problem manager.
+            return false;
+        }
+
+        println!("Translate:");
         println!("{}", self.from);
 
         let mut input = String::new();

@@ -26,6 +26,14 @@ impl BoundedBitVec {
 
         (self.data >> index) % 2 == 1
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.data == 0b00000000
+    }
+
+    pub fn is_full(&self) -> bool {
+        self.data == 0b11111111
+    }
 }
 
 impl From<&BoundedBitVec> for [bool; 8] {
@@ -84,6 +92,18 @@ mod tests {
             full: 0b11111111.into(),
             bounded_bit_vec: 0b10110110.into(),
         }
+    }
+
+    #[test]
+    fn empty_and_full() {
+        let Setup {
+            empty,
+            full,
+            bounded_bit_vec,
+        } = setup();
+
+        assert!(empty.is_empty());
+        assert!(full.is_full());
     }
 
     #[test]
