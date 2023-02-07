@@ -25,15 +25,17 @@ impl Problem {
                 continue;
             }
 
-            // TODO (2023-02-07): Do not filter these.
-            if [
-                "ma", "sa", "ji", "nu", "na", "ho", "do", "bu", "me", "da", "ri", "bi", "ha", "bo",
-                "bu", "be", "ke", "yu",
-            ]
-            .contains(&roman)
-            {
-                problems.push(Problem::new(hiragana, roman, p));
-            }
+            // // TODO (2023-02-07): Do not filter these.
+            // if [
+            //     "ma", "sa", "ji", "nu", "na", "ho", "do", "bu", "me", "da", "ri", "bi", "ha", "bo",
+            //     "bu", "be", "ke", "yu",
+            // ]
+            // .contains(&roman)
+            // {
+            // }
+            let id = problems.len();
+
+            problems.push(Problem::new(id, hiragana, roman, p));
         }
 
         Ok(problems)

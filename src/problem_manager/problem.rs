@@ -16,6 +16,7 @@ impl BoundedBitVec {
 
 #[derive(Debug, PartialEq)]
 pub struct Problem {
+    id: usize,
     from: String,
     to: String,
     history: BoundedBitVec,
@@ -25,13 +26,18 @@ pub struct Problem {
 }
 
 impl Problem {
-    pub fn new(from: &str, to: &str, p: f64) -> Self {
+    pub fn new(id: usize, from: &str, to: &str, p: f64) -> Self {
         Self {
+            id,
             from: from.to_owned(),
             to: to.to_owned(),
             history: BoundedBitVec::new(),
             p,
         }
+    }
+
+    pub fn get_id(&self) -> usize {
+        self.id
     }
 
     pub fn pose(&mut self) -> bool {

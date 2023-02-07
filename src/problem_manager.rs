@@ -11,6 +11,7 @@ pub struct ProblemManager {
     problems: Vec<Problem>,
     log_2_m: i32,
     rng: ThreadRng,
+    last_problem_id: Option<usize>,
 }
 
 impl ProblemManager {
@@ -30,11 +31,24 @@ impl ProblemManager {
             problems,
             log_2_m: m.log2().round() as i32,
             rng,
+            last_problem_id: None,
         }
     }
 
     pub fn pose(&mut self) {
-        let problem_index = self.get_most_relevant_problem_mut();
+        let mut problem_index = self.get_most_relevant_problem_mut();
+        let mut problem_id = self.problems[problem_index].get_id();
+
+        // Do not choose the same problem twice in a row.
+        if let Some(last_problem_id) = self.last_problem_id {
+            while problem_id == last_problem_id {
+                problem_index = self.get_most_relevant_problem_mut();
+                problem_id = self.problems[problem_index].get_id();
+            }
+        }
+
+        self.last_problem_id = Some(problem_id);
+
         let problem = &mut self.problems[problem_index];
 
         let correct = problem.pose();
