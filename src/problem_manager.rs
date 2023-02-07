@@ -36,52 +36,83 @@ impl ProblemManager {
     }
 
     pub fn pose(&mut self) {
-        let mut problem_index = self.get_most_relevant_problem_mut();
+        let problem_index = self.get_relevant_problem_index();
+
+        let problem = &mut self.problems[problem_index];
+
+        let correct = problem.pose();
+
+        // correct => bubble sort back (swap with lower p value).
+        // not correct => move to front (keep ordering of all other elements).
+        if correct {
+            let problem_p = problem.get_player_p();
+
+            // First problem after `problem`, that has a lower player p value.
+            let to_index_option = self
+                .problems
+                .iter()
+                .enumerate()
+                .skip(problem_index)
+                .find(|(_, problem)| problem.get_player_p() < problem_p);
+
+            if let Some((to_index, _)) = to_index_option {
+                self.problems.swap(problem_index, to_index);
+            }
+        } else {
+            let problem = self.problems.remove(problem_index);
+
+            self.problems.insert(0, problem);
+        }
+    }
+
+    fn get_relevant_problem_index(&mut self) -> usize {
+        let mut problem_index = self.generate_random_index();
         let mut problem_id = self.problems[problem_index].get_id();
 
         // Do not choose the same problem twice in a row.
         if let Some(last_problem_id) = self.last_problem_id {
             while problem_id == last_problem_id {
-                problem_index = self.get_most_relevant_problem_mut();
+                problem_index = self.generate_random_index();
                 problem_id = self.problems[problem_index].get_id();
             }
         }
 
         self.last_problem_id = Some(problem_id);
 
-        let problem = &mut self.problems[problem_index];
-
-        let correct = problem.pose();
-
-        let to_index;
-
-        if correct {
-            let to_index_option = self
-                .problems
-                .iter()
-                .enumerate()
-                .skip(problem_index)
-                .find(|(_, problem)| problem.get_player_p() > problem.get_player_p());
-
-            to_index = match to_index_option {
-                Some((i, _)) => i,
-                None => (problem_index + 1).min(self.problems.len() - 1),
-            };
-        } else {
-            to_index = 0;
-        }
-
-        let problem = self.problems.remove(problem_index);
-
-        self.problems.insert(to_index, problem);
+        problem_index
     }
 
-    fn get_most_relevant_problem_mut(&mut self) -> usize {
+    fn generate_random_index(&mut self) -> usize {
+        // 0 <= r < 1
         let r: f64 = self.rng.gen();
 
-        let m = self.problems.len() as f64;
+        let formula = 1;
 
-        (m * r.powi(self.log_2_m)) as usize
+        match formula {
+            0 => {
+                let m = self.problems.len() as f64;
+
+                (m * r.powi(self.log_2_m)) as usize
+            }
+            1 => {
+                // OVERFLOW:
+                // usize fits inside f64.
+                let m = self.problems.len() as f64;
+
+                // DIV 0:
+                // r < 1.
+                let x = 1.0 / (1.0 - r) - 1.0;
+
+                if x >= m {
+                    0
+                } else {
+                    // OVERFLOW:
+                    // x is now < m and m came from usize.
+                    x as usize
+                }
+            }
+            _ => panic!(),
+        }
     }
 
     pub fn total_p(&self) -> f64 {
