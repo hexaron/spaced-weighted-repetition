@@ -20,19 +20,6 @@ impl Problem {
 
             let (hiragana, roman) = (pair[0], pair[1]);
 
-            // TODO (2023-02-06): Do not skip these.
-            if hiragana.chars().into_iter().count() == 2 {
-                continue;
-            }
-
-            // // TODO (2023-02-07): Do not filter these.
-            // if [
-            //     "ma", "sa", "ji", "nu", "na", "ho", "do", "bu", "me", "da", "ri", "bi", "ha", "bo",
-            //     "bu", "be", "ke", "yu",
-            // ]
-            // .contains(&roman)
-            // {
-            // }
             let id = problems.len();
 
             problems.push(Problem::new(id, hiragana, roman, p));
